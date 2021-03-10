@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const url = require('url');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -14,23 +15,23 @@ const defaultHandler = (req, res) => {
 const paramsHandler = (req, res) => {
     const { src } = req.query;
     if (src) {
-        const url = src.split('/').splice(2);
-        const host_port = url[0].split(':');
-        const path = url.splice(1).reduce((p, c) => p += `/${c}`, '');
+        const parseurl = url.parse(src);
         const options = {
-            hostname: host_port[0],
-            port: host_port[1],
-            path,
-            method: 'GET'
+            headers: req.headers,
+            hostname: parseurl.hostname,
+            port: parseurl.port,
+            path: parseurl.pathname,
+            method: req.method
         };
         const respon = http.request(options, (urlResponse) => {
-            urlResponse.pipe(res, {
-                end: true
+            res.writeHead(urlResponse.statusCode, urlResponse.headers);
+            urlResponse.pipe(res).on('error', (err) => {
+                console.log('error', err);
             });
         });
-        respon.end();
+        req.pipe(respon).on('error', (err) => { console.log('error', err); });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400);
     }
 };
 app.get('/', paramsHandler);

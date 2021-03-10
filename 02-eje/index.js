@@ -19,7 +19,7 @@ app.get('/user/:id', (req, res) => {
             res.status(200).json(id.toUpperCase());
         }, 1000);
     } else {
-        res.sendStatus(404);
+        res.sendStatus(400);
     }
 });
 
@@ -31,7 +31,7 @@ app.get('/user', (req, res) => {
             res.status(200).json(id.toUpperCase());
         }, 1000);
     } else {
-        res.sendStatus(404);
+        res.sendStatus(400);
     }
 });
 

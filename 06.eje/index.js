@@ -24,7 +24,7 @@ const getUser = (req, res) => {
             res.sendStatus(404);
         }
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400);
     }
 };
 
